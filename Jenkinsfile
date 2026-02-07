@@ -2,9 +2,9 @@
     agent any
 
     environment {
-        IMAGE_NAME = "instantprachi/jenkins-demo"
+        IMAGE_NAME = "rajpatel1202/jenkins-demo"
         IMAGE_TAG  = "latest"
-        DOCKERHUB_USER = "instantprachi"
+        DOCKERHUB_USER = "rajpatel1202"
     }
 
     stages {
