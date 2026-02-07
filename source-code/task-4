@@ -1,0 +1,5 @@
+docker run -d \
+  --name nginx_8080 \
+  --restart unless-stopped \
+  -p 8080:80 \
+  nginx:latest
