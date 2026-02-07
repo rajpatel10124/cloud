@@ -1,0 +1,29 @@
+---
+- name: Install Docker and run container
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Run nginx container on port 8080
+      docker_container:
+        name: nginx_8080
+        image: nginx:latest
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "8080:80"
