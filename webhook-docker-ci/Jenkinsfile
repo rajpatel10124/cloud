@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "YOUR_DOCKERHUB_USERNAME/webhook-ci-demo"
+        IMAGE_NAME = "rajpatel1202/webhook-ci-demo"
         IMAGE_TAG  = "latest"
     }
 
