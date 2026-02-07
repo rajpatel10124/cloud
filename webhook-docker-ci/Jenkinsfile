@@ -8,14 +8,15 @@ pipeline {
 
     stages {
 
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                echo "Building Docker image..."
-                docker build -t $IMAGE_NAME:$IMAGE_TAG .
-                '''
-            }
-        }
+       stage('Build Docker Image') {
+    steps {
+        sh '''
+        echo "Building Docker image from webhook-docker-ci directory"
+        docker build -t rajpatel1202/webhook-ci-demo:latest webhook-docker-ci
+        '''
+    }
+}
+
 
         stage('Login to Docker Hub') {
             steps {
