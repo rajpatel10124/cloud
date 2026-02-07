@@ -1,0 +1,4 @@
+Fix login bug by validating user input
+Add CI pipeline for automated build
+Refactor Dockerfile for smaller image
+Learning Git properly
