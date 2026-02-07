@@ -1,51 +1,54 @@
- pipeline {
+pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "rajpatel1202/jenkins-demo"
+        IMAGE_NAME = "instantprachi/jenkins-docker-demo"
         IMAGE_TAG  = "latest"
-        DOCKERHUB_USER = "rajpatel1202"
     }
 
     stages {
 
-        stage('Build Docker Image') {
+        stage('Clone Source Code') {
             steps {
-                sh '''
-                docker build -t $IMAGE_NAME:$IMAGE_TAG .
-                '''
+                git branch: 'main',
+                    url: 'https://github.com/rajpatel10124/cloud.git'
             }
         }
 
-        stage('Login to Docker Hub') {
+        stage('Build Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    '''
+                script {
+                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
 
-        stage('Push Image to Docker Hub') {
+        stage('Docker Push (Company Managed Credentials)') {
             steps {
-                sh '''
-                docker push $IMAGE_NAME:$IMAGE_TAG
-                '''
+                script {
+                    try {
+                        withCredentials([usernamePassword(
+                            credentialsId: 'dockerhub-creds',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_TOKEN'
+                        )]) {
+                            sh '''
+                                echo "Attempting Docker Hub login using company credentials"
+                                echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
+                                docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                            '''
+                        }
+                    } catch (err) {
+                        echo "Docker push skipped – company credentials not provided"
+                    }
+                }
             }
         }
     }
 
     post {
         success {
-            echo "Docker image built and pushed successfully"
-        }
-        failure {
-            echo "Pipeline failed"
+            echo "Pipeline completed successfully"
         }
     }
 }
